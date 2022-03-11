@@ -1,15 +1,14 @@
-import * as dotenv from "dotenv";
-
-import { HardhatUserConfig, task } from "hardhat/config";
-import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
+import "hardhat-contract-sizer";
 import "hardhat-gas-reporter";
-import "solidity-coverage";
+import "hardhat-tracer";
+import { task, HardhatUserConfig } from "hardhat/config";
+import "ts-node/register";
 
+import dotenv from "dotenv";
 dotenv.config();
-
-const mnemonic = process.env.MNEMONIC;
+const privateKey = process.env.PRIVATE_KEY || "";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -21,27 +20,74 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
 const config: HardhatUserConfig = {
-  solidity: "0.8.4",
-  networks: {
-    fuji: {
-      accounts: {
-        mnemonic
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.7",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+          outputSelection: {
+            "*": {
+              "*": ["storageLayout"],
+            },
+          },
+        },
       },
+    ],
+  },
+  networks: {
+    localhost: {
+      gasPrice: 470000000000,
+      chainId: 43114,
+      url: "http://127.0.0.1:8545/ext/bc/C/rpc",
+    },
+    hardhat: {
+      gasPrice: 470000000000,
+      chainId: 43114,
+      initialDate: "2020-10-10",
+      forking: {
+        url: "https://api.avax.network/ext/bc/C/rpc",
+        enabled: true,
+      },
+      accounts: {
+        accountsBalance: "1000000000000000000000000000000",
+        count: 50,
+      },
+    },
+    avash: {
+      url: "http://localhost:9650/ext/bc/C/rpc",
+      gasPrice: 470000000000,
+      chainId: 43112,
+      accounts: [
+        "0x56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027",
+      ],
+    },
+    fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
       gas: 8000000,
-      gasPrice: 225000000000,
-      timeout: 30000,
-      chainId: 43113
-    }
+      gasPrice: 25000000000,
+      chainId: 43113,
+      accounts: [privateKey],
+    },
+    mainnet: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      gasPrice: 42000000000,
+      chainId: 43114,
+      accounts: [privateKey],
+    },
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD"
-  }
+    enabled: true,
+    showTimeSpent: true,
+    gasPrice: 225,
+  },
 };
 
 export default config;
