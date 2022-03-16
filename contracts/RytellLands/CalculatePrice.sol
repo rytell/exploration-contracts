@@ -44,8 +44,6 @@ contract CalculatePrice {
     uint256 balanceAvax = IERC20(avax).balanceOf(avaxUsdc);
     uint256 balanceUsdc = IERC20(usdc).balanceOf(avaxUsdc);
 
-    // 1 usdc is worth ... avax
-
     uint256 landPriceAvax = (baseUsdPrice * balanceAvax * 1000000000000000000) /
       (balanceUsdc * (1000000000000) * 2);
 
@@ -64,25 +62,24 @@ contract CalculatePrice {
     returns (
       uint256,
       uint256,
-      uint256 liquidity
+      uint256 lpTokensAmount
     )
   {
     (uint256 avaxAmount, uint256 radiAmount) = getLandPriceInTokens();
 
-    // TODO calculate how many lp tokens will be needed
     address avaxRadi = getPairAddress(avax, radi);
     uint256 lpTotalSupply = IRytellPair(avaxRadi).totalSupply();
     (uint112 _reserve0, uint112 _reserve1, ) = IRytellPair(avaxRadi)
       .getReserves();
     if (lpTotalSupply == 0) {
-      liquidity = Math.sqrt(avaxAmount.mul(radiAmount));
+      lpTokensAmount = Math.sqrt(avaxAmount.mul(radiAmount));
     } else {
-      liquidity = Math.min(
+      lpTokensAmount = Math.min(
         avaxAmount.mul(lpTotalSupply) / _reserve0,
         radiAmount.mul(lpTotalSupply) / _reserve1
       );
     }
-    require(liquidity > 0, "Rytell: INSUFFICIENT_LIQUIDITY_MINTED");
-    return (avaxAmount, radiAmount, liquidity);
+    require(lpTokensAmount > 0, "Rytell: INSUFFICIENT_LIQUIDITY_MINTED");
+    return (avaxAmount, radiAmount, lpTokensAmount);
   }
 }
