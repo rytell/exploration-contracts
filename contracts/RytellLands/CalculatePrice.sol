@@ -15,8 +15,6 @@ contract CalculatePrice {
   address public usdc;
   address public factory;
   uint256 public baseUsdPrice;
-  uint8 public ratioDecimals = 18;
-  uint112 public ratioMultiplier = 1000000000000000000;
 
   constructor(
     address _avax,
@@ -39,18 +37,6 @@ contract CalculatePrice {
   {
     address pair = IRytellFactory(factory).getPair(token1, token2);
     return pair;
-  }
-
-  function getLandPriceAvaxOnly() public view returns (uint256) {
-    address avaxUsdc = getPairAddress(avax, usdc);
-    uint256 balanceAvax = IERC20(avax).balanceOf(avaxUsdc);
-    uint256 balanceUsdc = IERC20(usdc).balanceOf(avaxUsdc);
-
-    // 1 usdc is worth ... avax
-    uint256 usdPrice = balanceAvax / (balanceUsdc * (1000000000000));
-
-    uint256 landPriceAvax = baseUsdPrice * usdPrice;
-    return landPriceAvax;
   }
 
   function getLandPriceInTokens() public view returns (uint256, uint256) {
