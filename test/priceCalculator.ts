@@ -71,8 +71,9 @@ describe("CalculatePrice", function () {
     );
 
     // get pairs lp tokens addresses.
-    avaxUsdc = await factory.allPairs("0");
-    avaxRadi = await factory.allPairs("1");
+    const RytellPair = await ethers.getContractFactory("RytellPair");
+    avaxUsdc = await RytellPair.attach(await factory.allPairs("0"));
+    avaxRadi = await RytellPair.attach(await factory.allPairs("1"));
 
     // initialize PriceCalculator
     const CalculatePrice = await ethers.getContractFactory("CalculatePrice");
@@ -97,5 +98,42 @@ describe("CalculatePrice", function () {
     const prices = await priceCalculator.getPrice();
     expect(prices[0].toString()).to.equal("2000000000000000000");
     expect(prices[1].toString()).to.equal("7546320000000000000000");
+    expect(prices[2].toString()).to.equal("122852106209051214621");
+
+    // approve router to spend radi
+    await testRadi
+      .connect(landBuyers[0])
+      .approve(router.address, ethers.constants.MaxUint256);
+
+    // land buyer buys radi for 5 avax
+    await router
+      .connect(landBuyers[0])
+      .swapExactAVAXForTokens(
+        "1",
+        [testWavax.address, testRadi.address],
+        landBuyers[0].address,
+        new Date().getTime() + 1000 * 60 * 60 * 60,
+        {
+          value: ethers.utils.parseEther("5"),
+        }
+      );
+
+    // inject more or less enough to buy a land
+    await router
+      .connect(landBuyers[0])
+      .addLiquidityAVAX(
+        testRadi.address,
+        ethers.utils.parseEther("10220").toString(),
+        "1",
+        "1",
+        landBuyers[0].address,
+        new Date().getTime() + 1000 * 60 * 60 * 60,
+        {
+          value: ethers.utils.parseEther("2.09"),
+        }
+      );
+
+    const buyerLpBalance = await avaxRadi.balanceOf(landBuyers[0].address);
+    expect(buyerLpBalance).to.equal("128316292842037500529");
   });
 });

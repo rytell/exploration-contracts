@@ -4,8 +4,12 @@ pragma solidity ^0.8.7;
 import "@rytell/exchange-contracts/contracts/core/interfaces/IRytellPair.sol";
 import "@rytell/exchange-contracts/contracts/core/interfaces/IRytellFactory.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./libraries/Math.sol";
+import "./libraries/SafeMath.sol";
 
 contract CalculatePrice {
+  using SafeMath for uint256;
+
   address public avax;
   address public radi;
   address public usdc;
@@ -68,11 +72,31 @@ contract CalculatePrice {
     return (landPriceAvax, amountRadi);
   }
 
-  function getPrice() public view returns (uint256, uint256) {
+  function getPrice()
+    public
+    view
+    returns (
+      uint256,
+      uint256,
+      uint256 liquidity
+    )
+  {
     (uint256 avaxAmount, uint256 radiAmount) = getLandPriceInTokens();
 
     // TODO calculate how many lp tokens will be needed
-
-    return (avaxAmount, radiAmount);
+    address avaxRadi = getPairAddress(avax, radi);
+    uint256 lpTotalSupply = IRytellPair(avaxRadi).totalSupply();
+    (uint112 _reserve0, uint112 _reserve1, ) = IRytellPair(avaxRadi)
+      .getReserves();
+    if (lpTotalSupply == 0) {
+      liquidity = Math.sqrt(avaxAmount.mul(radiAmount));
+    } else {
+      liquidity = Math.min(
+        avaxAmount.mul(lpTotalSupply) / _reserve0,
+        radiAmount.mul(lpTotalSupply) / _reserve1
+      );
+    }
+    require(liquidity > 0, "Rytell: INSUFFICIENT_LIQUIDITY_MINTED");
+    return (avaxAmount, radiAmount, liquidity);
   }
 }
