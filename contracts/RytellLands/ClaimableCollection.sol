@@ -35,8 +35,6 @@ contract ClaimableCollection is ERC721Enumerable, Ownable {
   }
 
   modifier mintCompliance(uint256 _heroNumber) {
-    // require(_mintAmount > 0 && _mintAmount <= maxMintAmountPerTx, "Invalid mint amount!"); //
-    // require(supply.current() + _mintAmount <= maxSupply, "Max supply exceeded!");
     // You don't own this hero
     require(
       IBaseCollection(baseCollection).ownerOf(_heroNumber) == _msgSender(),
@@ -59,31 +57,6 @@ contract ClaimableCollection is ERC721Enumerable, Ownable {
     _safeMint(_msgSender(), _heroNumber);
     heroLand[_heroNumber] = _heroNumber;
   }
-
-  // function walletOfOwner(address _owner)
-  //   public
-  //   view
-  //   returns (uint256[] memory)
-  // {
-  //   uint256 ownerTokenCount = balanceOf(_owner);
-  //   uint256[] memory ownedTokenIds = new uint256[](ownerTokenCount);
-  //   uint256 currentTokenId = 1;
-  //   uint256 ownedTokenIndex = 0;
-
-  //   while (ownedTokenIndex < ownerTokenCount && currentTokenId <= maxSupply) {
-  //     address currentTokenOwner = ownerOf(currentTokenId);
-
-  //     if (currentTokenOwner == _owner) {
-  //       ownedTokenIds[ownedTokenIndex] = currentTokenId;
-
-  //       ownedTokenIndex++;
-  //     }
-
-  //     currentTokenId++;
-  //   }
-
-  //   return ownedTokenIds;
-  // }
 
   /// @dev This function collects all the token IDs of a wallet.
   /// @param owner_ This is the address for which the balance of token IDs is returned.
