@@ -57,7 +57,7 @@ contract CalculatePrice {
   }
 
   function getPrice()
-    public
+    external
     view
     returns (
       uint256,
@@ -71,13 +71,22 @@ contract CalculatePrice {
     uint256 lpTotalSupply = IRytellPair(avaxRadi).totalSupply();
     (uint112 _reserve0, uint112 _reserve1, ) = IRytellPair(avaxRadi)
       .getReserves();
+    address token0 = IRytellPair(avaxRadi).token0();
+
     if (lpTotalSupply == 0) {
       lpTokensAmount = Math.sqrt(avaxAmount.mul(radiAmount));
     } else {
-      lpTokensAmount = Math.min(
-        avaxAmount.mul(lpTotalSupply) / _reserve0,
-        radiAmount.mul(lpTotalSupply) / _reserve1
-      );
+      if (token0 == avax) {
+        lpTokensAmount = Math.min(
+          avaxAmount.mul(lpTotalSupply) / _reserve0,
+          radiAmount.mul(lpTotalSupply) / _reserve1
+        );
+      } else {
+        lpTokensAmount = Math.min(
+          avaxAmount.mul(lpTotalSupply) / _reserve1,
+          radiAmount.mul(lpTotalSupply) / _reserve0
+        );
+      }
     }
     require(lpTokensAmount > 0, "Rytell: INSUFFICIENT_LIQUIDITY_MINTED");
     return (avaxAmount, radiAmount, lpTokensAmount);

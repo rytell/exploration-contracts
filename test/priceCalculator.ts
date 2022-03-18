@@ -84,6 +84,7 @@ describe("CalculatePrice", function () {
       factory.address,
       BASE_USD_PRICE
     );
+    await priceCalculator.deployed();
   });
 
   it("Should be initialized correctly", async function () {

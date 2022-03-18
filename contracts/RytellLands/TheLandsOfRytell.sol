@@ -9,7 +9,7 @@ import "@rytell/exchange-contracts/contracts/core/interfaces/IRytellPair.sol";
 
 interface ICalculatePrice {
   function getPrice()
-    public
+    external
     view
     returns (
       uint256,
@@ -62,9 +62,7 @@ contract ERC721Metadata is ERC721Enumerable, Ownable {
       "ERC721Metadata: URI query for nonexistent token"
     );
 
-    if (!_exists(tokenId) || !revealed) {
-      return notRevealedUri;
-    }
+    require(!_exists(tokenId), "This Token doesn't exist");
 
     return
       bytes(baseURI).length > 0
@@ -79,10 +77,7 @@ contract TheLandsOfRytell is ERC721Metadata {
   using Counters for Counters.Counter;
 
   uint256 public constant MAX_NFT_SUPPLY = 2400;
-  //TODO:
-  //uint256 public constant MINT_PRICE = 2.5 ether;
-  //We have to make sure that MAX_MINT_AMOUNT and MAX_MINT_AMOUNT_AT_ONCE are suitable numbers!
-  uint256 private constant MAX_MINT_AMOUNT = 60;
+
   uint256 private constant MAX_MINT_AMOUNT_AT_ONCE = 20;
 
   bool public paused = true;
@@ -94,13 +89,13 @@ contract TheLandsOfRytell is ERC721Metadata {
   // Admin wallet
   address private _admin;
 
-  uint256 private _totalDividend;
-  uint256 private _reflectionBalance;
-  mapping(uint256 => uint256) private _lastDividendAt;
+  // uint256 private _totalDividend;
+  // uint256 private _reflectionBalance;
+  // mapping(uint256 => uint256) private _lastDividendAt;
 
   uint256 private _totalSupply;
-  uint256 private _giveawayMax = 50;
-  uint256[10001] private _pendingIDs;
+  // uint256 private _giveawayMax = 50;
+  uint256[2401] private _pendingIDs;
 
   address public priceCalculatorAddress;
   address public avaxRadiPairAddress;
@@ -109,7 +104,7 @@ contract TheLandsOfRytell is ERC721Metadata {
     string memory baseURI_,
     address admin_,
     address _priceCalculatorAddress,
-    address _avaxRadiPairAddress
+    address _avaxRadiPairAddress // LP token contract
   ) ERC721Metadata("TheLandsOfRytell", "TLOR", baseURI_, MAX_NFT_SUPPLY) {
     _admin = admin_;
     priceCalculatorAddress = _priceCalculatorAddress;
@@ -150,26 +145,26 @@ contract TheLandsOfRytell is ERC721Metadata {
       counts_ <= MAX_MINT_AMOUNT_AT_ONCE,
       "Rytell: You may not buy more than 20 NFTs at once"
     );
-    require(
-      _mintedByWallet[_msgSender()].add(counts_) <= MAX_MINT_AMOUNT,
-      "Rytell: You may not buy more than 50 NFTs"
-    );
     // TODO ask for the above limitations
 
-    (
-      uint256 priceAvax,
-      uint256 priceRadi,
-      uint256 priceLpTokens
-    ) = ICalculatePrice(priceCalculatorAddress).getPrice();
+    (, , uint256 priceLpTokens) = ICalculatePrice(priceCalculatorAddress)
+      .getPrice();
+
     uint256 senderBalance = IRytellPair(avaxRadiPairAddress).balanceOf(
       _msgSender()
     );
+
     require(
       senderBalance >= priceLpTokens.mul(counts_),
       "You don't have enough AVAX/RADI LP tokens."
     );
 
     // TODO make a safe transfer from user to admin for priceLpTokens.mul(counts_)
+    IRytellPair(avaxRadiPairAddress).transferFrom(
+      _msgSender(),
+      _admin,
+      priceLpTokens.mul(counts_)
+    );
 
     for (uint256 i = 0; i < counts_; i++) {
       _randomMint(_msgSender());
@@ -189,7 +184,7 @@ contract TheLandsOfRytell is ERC721Metadata {
     _minters[tokenID] = to_;
     _mintedByWallet[to_] += 1;
 
-    _lastDividendAt[tokenID] = _totalDividend;
+    // _lastDividendAt[tokenID] = _totalDividend;
     _safeMint(to_, tokenID);
 
     return tokenID;
