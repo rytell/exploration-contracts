@@ -73,8 +73,6 @@ contract TheLandsOfRytell is ERC721Metadata {
 
   uint256 public constant MAX_NFT_SUPPLY = 2400;
 
-  uint256 private constant MAX_MINT_AMOUNT_AT_ONCE = 20;
-
   bool public paused = true;
   uint256 public pendingCount = MAX_NFT_SUPPLY;
 
@@ -130,13 +128,6 @@ contract TheLandsOfRytell is ERC721Metadata {
       "Rytell: sale already ended"
     );
     require(!paused, "Rytell: The contract is paused");
-
-    // TODO mint limitations, should lands also have these limits?
-    require(
-      counts_ <= MAX_MINT_AMOUNT_AT_ONCE,
-      "Rytell: You may not buy more than 20 NFTs at once"
-    );
-    // TODO ask for the above limitations
 
     (, , uint256 priceLpTokens) = ICalculatePrice(priceCalculatorAddress)
       .getPrice();
