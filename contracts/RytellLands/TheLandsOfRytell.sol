@@ -18,11 +18,6 @@ interface ICalculatePrice {
     );
 }
 
-// TODO:
-// uint price = IPriceCalculator(priceCalculatorAddress).getCurrentLandsPrice();
-//safeTransferFrom(user, contract, price)
-//IRytellPair(avaxRadiLpContractAddress).safeTransferFrom(msg.sender, address(this), price);
-
 contract ERC721Metadata is ERC721Enumerable, Ownable {
   using Strings for uint256;
 
@@ -89,12 +84,8 @@ contract TheLandsOfRytell is ERC721Metadata {
   // Admin wallet
   address private _admin;
 
-  // uint256 private _totalDividend;
-  // uint256 private _reflectionBalance;
-  // mapping(uint256 => uint256) private _lastDividendAt;
 
   uint256 private _totalSupply;
-  // uint256 private _giveawayMax = 50;
   uint256[2401] private _pendingIDs;
 
   address public priceCalculatorAddress;
@@ -159,7 +150,6 @@ contract TheLandsOfRytell is ERC721Metadata {
       "You don't have enough AVAX/RADI LP tokens."
     );
 
-    // TODO make a safe transfer from user to admin for priceLpTokens.mul(counts_)
     IRytellPair(avaxRadiPairAddress).transferFrom(
       _msgSender(),
       _admin,
@@ -184,7 +174,6 @@ contract TheLandsOfRytell is ERC721Metadata {
     _minters[tokenID] = to_;
     _mintedByWallet[to_] += 1;
 
-    // _lastDividendAt[tokenID] = _totalDividend;
     _safeMint(to_, tokenID);
 
     return tokenID;
