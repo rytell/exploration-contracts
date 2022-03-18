@@ -43,6 +43,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.3",
     "@rytell/exchange-contracts": "^1.0.1",
+    "@rytell/sdk": "^1.0.4",
     "axios": "^0.26.1",
     "hardhat-contract-sizer": "^2.5.0",
     "hardhat-tracer": "^1.0.0-alpha.6"
