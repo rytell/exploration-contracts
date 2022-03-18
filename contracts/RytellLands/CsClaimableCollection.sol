@@ -19,7 +19,6 @@ contract CsClaimableCollection is ERC721Enumerable, Ownable {
   string public uriSuffix = ".json";
 
   uint256 public maxSupply = 10000;
-  uint256 public maxMintAmountPerTx = 5;
 
   bool public paused = true;
   string private baseURI;
@@ -97,10 +96,6 @@ contract CsClaimableCollection is ERC721Enumerable, Ownable {
 
   function setBaseCollectionAddress(address _newAddress) public onlyOwner {
     baseCollection = _newAddress;
-  }
-
-  function setMaxMintAmountPerTx(uint256 _maxMintAmountPerTx) public onlyOwner {
-    maxMintAmountPerTx = _maxMintAmountPerTx;
   }
 
   function setUriPrefix(string memory _uriPrefix) public onlyOwner {
