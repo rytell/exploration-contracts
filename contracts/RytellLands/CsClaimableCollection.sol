@@ -27,7 +27,7 @@ contract CsClaimableCollection is ERC721Enumerable, Ownable {
   mapping(uint256 => uint256) public sealLand;
 
   constructor(string memory _baseUri, address _baseCollection)
-    ERC721("TLORCS ", "TLORCS")
+    ERC721("The lands of the crypto seals of Rytell", "TLOCSR")
   {
     baseURI = _baseUri; // ipfs://id/
     baseCollection = _baseCollection; // rytell seals collection address

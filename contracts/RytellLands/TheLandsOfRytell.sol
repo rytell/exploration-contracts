@@ -94,7 +94,7 @@ contract TheLandsOfRytell is ERC721Metadata {
     address admin_,
     address _priceCalculatorAddress,
     address _avaxRadiPairAddress // LP token contract
-  ) ERC721Metadata("TheLandsOfRytell", "TLOR", baseURI_, MAX_NFT_SUPPLY) {
+  ) ERC721Metadata("The lands of Rytell", "TLOR", baseURI_, MAX_NFT_SUPPLY) {
     _admin = admin_;
     priceCalculatorAddress = _priceCalculatorAddress;
     avaxRadiPairAddress = _avaxRadiPairAddress;

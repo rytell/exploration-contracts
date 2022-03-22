@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import axios from "axios";
+import { Console } from "console";
 
 type HeroLandMap = {
   Beach: string;
@@ -37,13 +38,13 @@ describe("ClaimableCollection", function () {
     // mint some
     await baseCollection
       .connect(landClaimers[0])
-      .mint(5, { value: ethers.utils.parseEther("12.5") });
+      .mint(10, { value: ethers.utils.parseEther("25") });
 
     const ClaimableCollection = await ethers.getContractFactory(
       "ClaimableCollection"
     );
     claimableCollection = await ClaimableCollection.deploy(
-      "ipfs://QmVvpF887BE1h5rojcxg8aZC6yrtc5Q5oNeqfwnEzy2KPa/",
+      "ipfs://QmTYv156pj5Lm7F4msJTNAwo2xPVBcF4QHhAwrr3vHSG5g/",
       baseCollection.address
     );
     await claimableCollection.deployed();
@@ -53,7 +54,7 @@ describe("ClaimableCollection", function () {
     const landClaimerHeroBalance = await baseCollection.balanceOf(
       landClaimers[0].address
     );
-    expect(landClaimerHeroBalance.toNumber()).to.equal(5);
+    expect(landClaimerHeroBalance.toNumber()).to.equal(10);
   });
 
   it("Should let hero owners to claim lands", async function () {
@@ -89,6 +90,10 @@ describe("ClaimableCollection", function () {
     const heroNumbers = await baseCollection.walletOfOwner(
       landClaimers[0].address
     );
+    console.log(
+      heroNumbers.map((heronum: any) => heronum.toString()),
+      ": HERO NUMBERS"
+    );
 
     // claim a land for each hero
     await Promise.all(
@@ -108,21 +113,23 @@ describe("ClaimableCollection", function () {
       );
     }
 
-    const metaDataToCompare: { hero: any[]; land: any[] }[] = await Promise.all(
-      heroNumbers.map(async (heroNumber: any) => {
-        const { data: heroMeta } = await axios.get(
-          `https://rytell.mypinata.cloud/ipfs/QmXHJfoMaDiRuzgkVSMkEsMgQNAtSKr13rtw5s59QoHJAm/${heroNumber.toString()}.json`
-        );
-        const { data: landMeta } = await axios.get(
-          `https://rytell.mypinata.cloud/ipfs/QmVvpF887BE1h5rojcxg8aZC6yrtc5Q5oNeqfwnEzy2KPa/${heroNumber.toString()}.json`
-        );
+    const metaDataToCompare: { hero: any[]; land: any[]; number: number }[] =
+      await Promise.all(
+        heroNumbers.map(async (heroNumber: any) => {
+          const { data: heroMeta } = await axios.get(
+            `https://rytell.mypinata.cloud/ipfs/QmXHJfoMaDiRuzgkVSMkEsMgQNAtSKr13rtw5s59QoHJAm/${heroNumber.toString()}.json`
+          );
+          const { data: landMeta } = await axios.get(
+            `https://rytell.mypinata.cloud/ipfs/QmTYv156pj5Lm7F4msJTNAwo2xPVBcF4QHhAwrr3vHSG5g/${heroNumber.toString()}.json`
+          );
 
-        return {
-          hero: heroMeta.attributes,
-          land: landMeta.attributes,
-        };
-      })
-    );
+          return {
+            hero: heroMeta.attributes,
+            land: landMeta.attributes,
+            number: heroNumber,
+          };
+        })
+      );
 
     const backgroundLandsMap: HeroLandMap = {
       Beach: "Island",
@@ -136,27 +143,33 @@ describe("ClaimableCollection", function () {
     };
 
     expect(
-      metaDataToCompare.every((heroLand: { hero: any[]; land: any[] }) => {
-        const heroBackground = heroLand.hero.find(
-          // eslint-disable-next-line camelcase
-          (attribute: { trait_type: string; value: string }) =>
-            attribute.trait_type === "Background"
-        ).value as
-          | "Beach"
-          | "Castle"
-          | "Desert"
-          | "Grove"
-          | "Montains"
-          | "Plains"
-          | "Green Forest"
-          | "Snow Montains";
-        const landAttrs = heroLand.land;
-        return landAttrs.find(
-          // eslint-disable-next-line camelcase
-          (attribute: { trait_type: string; value: string }) =>
-            attribute.trait_type === backgroundLandsMap[heroBackground]
-        );
-      })
+      metaDataToCompare.every(
+        (heroLand: { hero: any[]; land: any[]; number: number }) => {
+          const heroBackground = heroLand.hero.find(
+            // eslint-disable-next-line camelcase
+            (attribute: { trait_type: string; value: string }) =>
+              attribute.trait_type === "Background"
+          ).value as
+            | "Beach"
+            | "Castle"
+            | "Desert"
+            | "Grove"
+            | "Montains"
+            | "Plains"
+            | "Green Forest"
+            | "Snow Montains";
+
+          console.log(heroBackground, ": HERO BG");
+          const landAttrs = heroLand.land;
+          console.log(landAttrs, ": LAND ATTRS");
+          console.log(heroLand.number.toString(), ": Number");
+          return landAttrs.find(
+            // eslint-disable-next-line camelcase
+            (attribute: { trait_type: string; value: string }) =>
+              attribute.trait_type === backgroundLandsMap[heroBackground]
+          );
+        }
+      )
     ).to.equal(true);
   });
 });

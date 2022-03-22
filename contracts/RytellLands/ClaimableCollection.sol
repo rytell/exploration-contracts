@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -27,7 +27,7 @@ contract ClaimableCollection is ERC721Enumerable, Ownable {
   mapping(uint256 => uint256) public heroLand;
 
   constructor(string memory _baseUri, address _baseCollection)
-    ERC721("TLORA", "TLORA")
+    ERC721("The lands of the heroes of Rytell", "TLOHR")
   {
     baseURI = _baseUri; // ipfs://id/
     baseCollection = _baseCollection; // rytell heros collection address
