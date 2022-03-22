@@ -7,16 +7,16 @@ import { ethers } from "hardhat";
 import { ChainId } from "@rytell/sdk";
 
 const BASE_COLLECTION = {
-  [ChainId.FUJI]: "0x6122F8cCFC196Eb2689a740d16c451a352740194",
-  [ChainId.AVALANCHE]: "0x0ca68D5768BECA6FCF444C01FE1fb6d47C019b9f",
+  [ChainId.FUJI]: "0x9EE99f276fAFB7350b9Ab0314431a24a6A68E34B",
+  [ChainId.AVALANCHE]: "0x0540E4EE0C5CdBA347C2f0E011ACF8651bB70Eb9",
 };
 
 async function main() {
-  const ClaimableCollection = await ethers.getContractFactory(
-    "ClaimableCollection"
+  const CsClaimableCollection = await ethers.getContractFactory(
+    "CsClaimableCollection"
   );
-  const claimableCollection = await ClaimableCollection.deploy(
-    "ipfs://QmUWjzWH8BasGqyH7tPBiscas1q1Lp8hsqwtVxiUuEhWRZ/",
+  const claimableCollection = await CsClaimableCollection.deploy(
+    "ipfs://QmRDDHtTzYDgHJth5KBzw7aVicZ3yyymmvEoLF9EfkcCgd/",
     BASE_COLLECTION[ChainId.FUJI]
   );
 

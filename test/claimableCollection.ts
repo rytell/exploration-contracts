@@ -44,7 +44,7 @@ describe("ClaimableCollection", function () {
       "ClaimableCollection"
     );
     claimableCollection = await ClaimableCollection.deploy(
-      "ipfs://QmTYv156pj5Lm7F4msJTNAwo2xPVBcF4QHhAwrr3vHSG5g/",
+      "ipfs://QmUWjzWH8BasGqyH7tPBiscas1q1Lp8hsqwtVxiUuEhWRZ/",
       baseCollection.address
     );
     await claimableCollection.deployed();
@@ -120,7 +120,7 @@ describe("ClaimableCollection", function () {
             `https://rytell.mypinata.cloud/ipfs/QmXHJfoMaDiRuzgkVSMkEsMgQNAtSKr13rtw5s59QoHJAm/${heroNumber.toString()}.json`
           );
           const { data: landMeta } = await axios.get(
-            `https://rytell.mypinata.cloud/ipfs/QmTYv156pj5Lm7F4msJTNAwo2xPVBcF4QHhAwrr3vHSG5g/${heroNumber.toString()}.json`
+            `https://rytell.mypinata.cloud/ipfs/QmUWjzWH8BasGqyH7tPBiscas1q1Lp8hsqwtVxiUuEhWRZ/${heroNumber.toString()}.json`
           );
 
           return {

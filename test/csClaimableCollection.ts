@@ -25,7 +25,7 @@ describe("ClaimableCollection", function () {
       "CsClaimableCollection"
     );
     claimableCollection = await ClaimableCollection.deploy(
-      "ipfs://QmVvpF887BE1h5rojcxg8aZC6yrtc5Q5oNeqfwnEzy2KPa/",
+      "ipfs://QmRDDHtTzYDgHJth5KBzw7aVicZ3yyymmvEoLF9EfkcCgd/",
       baseCollection.address
     );
     await claimableCollection.deployed();
