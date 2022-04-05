@@ -1,11 +1,16 @@
 /**
+ *Submitted for verification at testnet.snowtrace.io on 2022-03-22
+*/
+
+// File: contracts/CryptoSeals.sol
+
+/**
  *Submitted for verification at snowtrace.io on 2021-11-08
 */
 
 // CRYPTOSEALS $AVAX CONTRACT
 // File: http://github.com/OpenZeppelin/openzeppelin-contracts/contracts/utils/Strings.sol
 
-// SPDX-License-Identifier: MIT
 
 
 

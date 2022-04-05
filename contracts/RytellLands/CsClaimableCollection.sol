@@ -34,6 +34,8 @@ contract CsClaimableCollection is ERC721Enumerable, Ownable {
   }
 
   modifier mintCompliance(uint256 _sealNumber) {
+    require(paused  == false, "Claiming is not allowed");
+
     // You don't own this seal
     require(
       IBaseCollection(baseCollection).ownerOf(_sealNumber) == _msgSender(),
@@ -53,8 +55,8 @@ contract CsClaimableCollection is ERC721Enumerable, Ownable {
 
   function mint(uint256 _sealNumber) public mintCompliance(_sealNumber) {
     supply.increment();
-    _safeMint(_msgSender(), _sealNumber);
-    sealLand[_sealNumber] = _sealNumber;
+    _safeMint(_msgSender(), _sealNumber + 1);
+    sealLand[_sealNumber] = _sealNumber + 1;
   }
 
   /// @dev This function collects all the token IDs of a wallet.

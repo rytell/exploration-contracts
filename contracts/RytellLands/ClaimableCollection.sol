@@ -34,6 +34,7 @@ contract ClaimableCollection is ERC721Enumerable, Ownable {
   }
 
   modifier mintCompliance(uint256 _heroNumber) {
+    require(paused  == false, "Claiming is not allowed");
     // You don't own this hero
     require(
       IBaseCollection(baseCollection).ownerOf(_heroNumber) == _msgSender(),

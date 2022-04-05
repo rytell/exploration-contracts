@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import axios from "axios";
-import { Console } from "console";
 
 type HeroLandMap = {
   Beach: string;
@@ -48,6 +47,7 @@ describe("ClaimableCollection", function () {
       baseCollection.address
     );
     await claimableCollection.deployed();
+    await claimableCollection.setPaused(false);
   });
 
   it("Land claimer should have at least a hero", async function () {

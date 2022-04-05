@@ -57,7 +57,8 @@ contract ERC721Metadata is ERC721Enumerable, Ownable {
       "ERC721Metadata: URI query for nonexistent token"
     );
 
-    require(!_exists(tokenId), "This Token doesn't exist");
+    // TODO: redeploy because this was using a negation
+    require(_exists(tokenId), "This Token doesn't exist");
 
     return
       bytes(baseURI).length > 0
