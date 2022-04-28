@@ -158,7 +158,9 @@ describe("CalculatePrice", function () {
       "ipfs://QmPT1Ah1ucxBSekD8MbQi9khunAe73mAusjede5xJkcApm/",
       landBuyers[1].address,
       priceCalculator.address,
-      avaxRadi.address
+      avaxRadi.address,
+      "The lands of Rytell",
+      "TLOR"
     );
     await theLandsOfRytell.deployed();
     await theLandsOfRytell.pause(false);
