@@ -220,5 +220,32 @@ describe("CalculatePrice", function () {
     expect(
       (await avaxRadi.balanceOf(landBuyers[1].address)).toString()
     ).to.equal(prices[2].toString());
+
+    console.log(
+      await theLandsOfRytell.walletOfOwner(landBuyers[1].address),
+      "previous giving"
+    );
+
+    await expect(theLandsOfRytell.give(1, landBuyers[1].address)).not.to.be
+      .reverted;
+
+    console.log(
+      await theLandsOfRytell.walletOfOwner(landBuyers[1].address),
+      "after giving"
+    );
+
+    // authorize with landbuyers 1
+    // should not revert if allowed and enough
+    await avaxRadi
+      .connect(landBuyers[1])
+      .approve(theLandsOfRytell.address, ethers.constants.MaxUint256);
+
+    await expect(theLandsOfRytell.connect(landBuyers[1]).mint(1)).not.to.be
+      .reverted;
+
+    console.log(
+      await theLandsOfRytell.walletOfOwner(landBuyers[1].address),
+      "after buying"
+    );
   });
 });

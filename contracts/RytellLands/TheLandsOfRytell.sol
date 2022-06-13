@@ -156,6 +156,20 @@ contract TheLandsOfRytell is ERC721Metadata {
     }
   }
 
+  function give(uint256 id, address recipient) public onlyOwner returns (uint256) {
+    require(recipient != address(0), "Rytell: zero address");
+    require(totalSupply() < MAX_NFT_SUPPLY, "Rytell: max supply reached");
+
+    uint256 tokenID = _popPendingAtIndex(id); // try pop pending at index
+
+    _minters[tokenID] = recipient; // add recipient to minters
+    _mintedByWallet[recipient] += 1; // add mints to recipient
+
+    _safeMint(recipient, tokenID); // try a safe mint
+
+    return id;
+  }
+
   function _randomMint(address to_) private returns (uint256) {
     require(to_ != address(0), "Rytell: zero address");
 
