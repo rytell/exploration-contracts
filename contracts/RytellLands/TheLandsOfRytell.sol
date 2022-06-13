@@ -219,4 +219,16 @@ contract TheLandsOfRytell is ERC721Metadata {
   function pause(bool state_) public onlyOwner {
     paused = state_;
   }
+
+  function setPriceCalculatorAddress(address _priceCalculatorAddress) public onlyOwner {
+    priceCalculatorAddress = _priceCalculatorAddress;
+  }
+
+  function setAdmin(address newAdmin) public onlyOwner {
+    _admin = newAdmin;
+  }
+
+  function setAvaxRadiPairAddress(address _avaxRadi) public onlyOwner {
+    avaxRadiPairAddress = _avaxRadi;
+  }
 }
