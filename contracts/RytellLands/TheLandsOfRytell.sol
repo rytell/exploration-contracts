@@ -170,6 +170,14 @@ contract TheLandsOfRytell is ERC721Metadata {
     return id;
   }
 
+  function giveMany(uint256[] memory ids, address recipient) public onlyOwner returns (uint256[] memory) {
+    for (uint256 index = 0; index < ids.length; index++) {
+      give(ids[index], recipient);
+    }
+
+    return ids;
+  }
+
   function _randomMint(address to_) private returns (uint256) {
     require(to_ != address(0), "Rytell: zero address");
 
