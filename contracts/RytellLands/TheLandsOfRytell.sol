@@ -57,7 +57,6 @@ contract ERC721Metadata is ERC721Enumerable, Ownable {
       "ERC721Metadata: URI query for nonexistent token"
     );
 
-    // TODO: redeploy because this was using a negation
     require(_exists(tokenId), "This Token doesn't exist");
 
     return
@@ -159,6 +158,7 @@ contract TheLandsOfRytell is ERC721Metadata {
   function give(uint256 id, address recipient) public onlyOwner returns (uint256) {
     require(recipient != address(0), "Rytell: zero address");
     require(totalSupply() < MAX_NFT_SUPPLY, "Rytell: max supply reached");
+    require(!_exists(id), "This Token does already exist");
 
     uint256 tokenID = _popPendingAtIndex(id); // try pop pending at index
 
@@ -166,6 +166,7 @@ contract TheLandsOfRytell is ERC721Metadata {
     _mintedByWallet[recipient] += 1; // add mints to recipient
 
     _safeMint(recipient, tokenID); // try a safe mint
+    _totalSupply += 1;
 
     return id;
   }
